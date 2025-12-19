@@ -1,0 +1,15 @@
+_extends: base.yaml
+
+bird:
+  jump_power: -9  
+  gravity: 0.8
+  max_speed_down: 12
+
+pipes:
+  speed: -5      
+  gap: 130        
+  spawn_offset: 15
+  min_offset: 60
+
+game:
+  difficulty: "hard"
