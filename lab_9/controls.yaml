@@ -1,0 +1,18 @@
+_extends: base.yaml
+
+window:
+  width: 800      # Больший экран
+  height: 600
+
+controls:
+  keys:
+    jump: [32, 273, 119]  # SPACE, UP, W
+    quit: [27]
+    restart: [13, 114]    # ENTER, R
+  
+  mouse:
+    jump_button: 1
+  
+  touch:
+    enabled: true
+    jump_area: "full"
