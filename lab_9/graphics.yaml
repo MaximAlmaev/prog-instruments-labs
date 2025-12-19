@@ -1,0 +1,22 @@
+_extends: base.yaml
+
+window:
+  title: "Flappy Bird Enhanced"
+
+paths:
+  digits: 
+    - "images/digits/0.png"
+    - "images/digits/1.png"
+    - "images/digits/2.png"
+    - "images/digits/3.png"
+    - "images/digits/4.png"
+    - "images/digits/5.png"
+    - "images/digits/6.png"
+    - "images/digits/7.png"
+    - "images/digits/8.png"
+    - "images/digits/9.png"
+
+colors:
+  fallback_bird: [255, 255, 0]
+  fallback_pipe: [0, 180, 0]
+  fallback_bg: [135, 206, 235]
