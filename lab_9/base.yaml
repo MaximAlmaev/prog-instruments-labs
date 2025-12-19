@@ -1,0 +1,27 @@
+window:
+  width: 600
+  height: 499
+  fps: 32
+  title: "Flappy Bird"
+
+game:
+  elevation_factor: 0.8
+  initial_score: 0
+  max_score: 9999
+  pipe_speed: -4
+
+paths:
+  bird: "images/bird.png"
+  pipe: "images/pipe.png"
+  background: "images/background.jpg"
+  ground: "images/base.jfif"
+
+bird:
+  jump_power: -8
+  gravity: 1
+  max_speed_down: 10
+  min_speed_up: -8
+
+pipes:
+  gap: 150
+  spacing: 300
