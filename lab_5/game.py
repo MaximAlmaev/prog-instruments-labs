@@ -145,7 +145,7 @@ def flappygame():
             pipeMidPos = pipe['x'] + game_images['pipeimage'][0].get_width()/2
             if pipeMidPos <= playerMidPos < pipeMidPos + 4: 
                 your_score += 1
-                logger.info(f"Счет увеличен: {your_score} (кадр: {frame_count})")
+                logger.debug(f"Счет увеличен: {your_score} (кадр: {frame_count})")
 
         if bird_velocity_y < bird_Max_Vel_Y and not bird_flapped: 
             bird_velocity_y += birdAccY 
@@ -348,3 +348,4 @@ if __name__ == "__main__":
                     
                     pygame.display.update() 
                     framepersecond_clock.tick(framepersecond)
+
