@@ -8,7 +8,7 @@ from pygame import RLEACCEL
 pygame.init()
 
 # Настройка окна и базовых параметров игры
-SCREEN_SIZE_DISPLAY = (width_screen, height_screen) = (600, 150)
+SCREEN_SIZE_DISPLAY = (WIDTH_SCREEN, HEIGHT_SCREEN) = (600, 150)
 FPS = 60
 GRAVITY = 0.6
 
@@ -30,14 +30,20 @@ JUMP_SOUND = pygame.mixer.Sound('resources/jump.wav')
 DIE_SOUND = pygame.mixer.Sound('resources/die.wav')
 CHECK_POINT_SOUND = pygame.mixer.Sound('resources/checkPoint.wav')
 
-# Загрузка изображения с возможностью изменения размера
-def load_image(
-    name,
-    sx=-1,
-    sy=-1,
-    color_key=None,
-    ):
 
+def load_image(name, sx=-1, sy=-1, color_key=None):
+    """
+    Загружает изображение из папки resources и опционально изменяет его размер.
+    
+    Args:
+        name (str): Имя файла изображения
+        sx (int): Желаемая ширина изображения (-1 для сохранения исходной)
+        sy (int): Желаемая высота изображения (-1 для сохранения исходной)
+        color_key (int/tuple): Ключевой цвет для прозрачности (-1 для использования верхнего левого пикселя)
+    
+    Returns:
+        tuple: (загруженное изображение, прямоугольник изображения)
+    """
     fullname = os.path.join('resources', name)
     img = pygame.image.load(fullname)
     img = img.convert()
@@ -51,15 +57,22 @@ def load_image(
 
     return (img, img.get_rect())
 
-# Загрузка спрайтов из спрайт-листа
-def load_sprite_sheet(
-        s_name,
-        name_x,
-        name_y,
-        scx=-1,
-        scy=-1,
-        c_key=None,
-       ):
+
+def load_sprite_sheet(s_name, name_x, name_y, scx=-1, scy=-1, c_key=None):
+    """
+    Загружает спрайт-лист и разбивает его на отдельные спрайты.
+    
+    Args:
+        s_name (str): Имя файла спрайт-листа
+        name_x (int): Количество спрайтов по горизонтали
+        name_y (int): Количество спрайтов по вертикали
+        scx (int): Желаемая ширина спрайта (-1 для сохранения исходной)
+        scy (int): Желаемая высота спрайта (-1 для сохранения исходной)
+        c_key (int/tuple): Ключевой цвет для прозрачности
+    
+    Returns:
+        tuple: (список спрайтов, прямоугольник первого спрайта)
+    """
     fullname = os.path.join('resources', s_name)
     sh = pygame.image.load(fullname)
     sh = sh.convert()
@@ -68,8 +81,8 @@ def load_sprite_sheet(
 
     sprites = []
 
-    sx = sh_rect.width/ name_x
-    sy = sh_rect.height/ name_y
+    sx = sh_rect.width / name_x
+    sy = sh_rect.height / name_y
 
     for i in range(0, name_y):
         for j in range(0, name_x):
@@ -90,23 +103,39 @@ def load_sprite_sheet(
 
     sprite_rect = sprites[0].get_rect()
 
-    return sprites,sprite_rect
+    return sprites, sprite_rect
 
-# Отображение сообщения "Game Over" и кнопки перезапуска
+
 def gameover_display_message(rbtn_image, gmo_image):
+    """
+    Отображает сообщение "Game Over" и кнопку перезапуска на экране.
+    
+    Args:
+        rbtn_image: Изображение кнопки перезапуска
+        gmo_image: Изображение сообщения "Game Over"
+    """
     rbtn_rect = rbtn_image.get_rect()
-    rbtn_rect.centerx = width_screen / 2
-    rbtn_rect.top = height_screen * 0.52
+    rbtn_rect.centerx = WIDTH_SCREEN / 2
+    rbtn_rect.top = HEIGHT_SCREEN * 0.52
 
     gmo_rect = gmo_image.get_rect()
-    gmo_rect.centerx = width_screen / 2
-    gmo_rect.centery = height_screen * 0.35
+    gmo_rect.centerx = WIDTH_SCREEN / 2
+    gmo_rect.centery = HEIGHT_SCREEN * 0.35
 
     SCREEN_LAYOUT_DISPLAY.blit(rbtn_image, rbtn_rect)
     SCREEN_LAYOUT_DISPLAY.blit(gmo_image, gmo_rect)
 
-# Разбивка числа на отдельные цифры для отображения очков
+
 def extract_digits(num):
+    """
+    Разбивает число на отдельные цифры для отображения счета.
+    
+    Args:
+        num (int): Число для разбиения
+    
+    Returns:
+        list: Список цифр числа, дополненный нулями до 5 знаков
+    """
     if num > -1:
         d = []
         i = 0
@@ -120,12 +149,22 @@ def extract_digits(num):
         d.reverse()
         return d
 
+
 class Dino():
+    """Класс, представляющий игрового персонажа - динозавра."""
+    
     def __init__(self, sx=-1, sy=-1):
+        """
+        Инициализирует объект динозавра.
+        
+        Args:
+            sx (int): Желаемая ширина спрайта динозавра
+            sy (int): Желаемая высота спрайта динозавра
+        """
         self.imgs, self.rect = load_sprite_sheet('dino.png', 5, 1, sx, sy, -1)
         self.imgs1, self.rect1 = load_sprite_sheet('dino_ducking.png', 2, 1, 59, sy, -1)
-        self.rect.bottom = int(0.98 * height_screen)
-        self.rect.left = width_screen / 15
+        self.rect.bottom = int(0.98 * HEIGHT_SCREEN)
+        self.rect.left = WIDTH_SCREEN / 15
         self.image = self.imgs[0]
         self.index = 0
         self.counter = 0
@@ -141,14 +180,17 @@ class Dino():
         self.duck_position_width = self.rect1.width
 
     def draw(self):
+        """Отрисовывает динозавра на экране."""
         SCREEN_LAYOUT_DISPLAY.blit(self.image, self.rect)
 
     def checkbounds(self):
-        if self.rect.bottom > int(0.98 * height_screen):
-            self.rect.bottom = int(0.98 * height_screen)
+        """Проверяет и корректирует положение динозавра относительно границ экрана."""
+        if self.rect.bottom > int(0.98 * HEIGHT_SCREEN):
+            self.rect.bottom = int(0.98 * HEIGHT_SCREEN)
             self.jumping = False
 
     def update(self):
+        """Обновляет состояние динозавра: анимацию, положение, счет."""
         if self.jumping:
             self.movement[1] = self.movement[1] + GRAVITY
 
@@ -190,40 +232,66 @@ class Dino():
 
         self.counter += 1
 
+
 class Cactus(pygame.sprite.Sprite):
+    """Класс, представляющий препятствие - кактус."""
+    
     def __init__(self, speed=5, sx=-1, sy=-1):
-        pygame.sprite.Sprite.__init__(self,self.containers)
+        """
+        Инициализирует объект кактуса.
+        
+        Args:
+            speed (int): Скорость движения кактуса
+            sx (int): Желаемая ширина спрайта
+            sy (int): Желаемая высота спрайта
+        """
+        pygame.sprite.Sprite.__init__(self, self.containers)
         self.imgs, self.rect = load_sprite_sheet('cactus-small.png', 3, 1, sx, sy, -1)
-        self.rect.bottom = int(0.98 * height_screen)
-        self.rect.left = width_screen + self.rect.width
+        self.rect.bottom = int(0.98 * HEIGHT_SCREEN)
+        self.rect.left = WIDTH_SCREEN + self.rect.width
         self.image = self.imgs[random.randrange(0, 3)]
         self.movement = [-1 * speed, 0]
 
     def draw(self):
+        """Отрисовывает кактус на экране."""
         SCREEN_LAYOUT_DISPLAY.blit(self.image, self.rect)
 
     def update(self):
+        """Обновляет положение кактуса и удаляет его при выходе за экран."""
         self.rect = self.rect.move(self.movement)
 
         if self.rect.right < 0:
             self.kill()
 
+
 class Birds(pygame.sprite.Sprite):
+    """Класс, представляющий препятствие - птиц."""
+    
     def __init__(self, speed=5, sx=-1, sy=-1):
+        """
+        Инициализирует объект птицы.
+        
+        Args:
+            speed (int): Скорость движения птицы
+            sx (int): Желаемая ширина спрайта
+            sy (int): Желаемая высота спрайта
+        """
         pygame.sprite.Sprite.__init__(self, self.containers)
         self.imgs, self.rect = load_sprite_sheet('birds.png', 2, 1, sx, sy, -1)
-        self.birds_height = [height_screen * 0.82, height_screen * 0.75, height_screen * 0.60]
+        self.birds_height = [HEIGHT_SCREEN * 0.82, HEIGHT_SCREEN * 0.75, HEIGHT_SCREEN * 0.60]
         self.rect.centery = self.birds_height[random.randrange(0, 3)]
-        self.rect.left = width_screen + self.rect.width
+        self.rect.left = WIDTH_SCREEN + self.rect.width
         self.image = self.imgs[0]
         self.movement = [-1 * speed, 0]
         self.index = 0
         self.counter = 0
 
     def draw(self):
+        """Отрисовывает птицу на экране."""
         SCREEN_LAYOUT_DISPLAY.blit(self.image, self.rect)
 
     def update(self):
+        """Обновляет анимацию и положение птицы."""
         if self.counter % 10 == 0:
             self.index = (self.index+1) % 2
         self.image = self.imgs[self.index]
@@ -234,19 +302,29 @@ class Birds(pygame.sprite.Sprite):
 
 
 class Ground():
-    def __init__(self,speed=-5):
-        self.image,self.rect = load_image('ground.png', -1, -1, -1)
-        self.image1,self.rect1 = load_image('ground.png', -1, -1, -1)
-        self.rect.bottom = height_screen
-        self.rect1.bottom = height_screen
+    """Класс, представляющий движущуюся землю."""
+    
+    def __init__(self, speed=-5):
+        """
+        Инициализирует объект земли.
+        
+        Args:
+            speed (int): Скорость движения земли (отрицательное значение для движения влево)
+        """
+        self.image, self.rect = load_image('ground.png', -1, -1, -1)
+        self.image1, self.rect1 = load_image('ground.png', -1, -1, -1)
+        self.rect.bottom = HEIGHT_SCREEN
+        self.rect1.bottom = HEIGHT_SCREEN
         self.rect1.left = self.rect.right
         self.speed = speed
 
     def draw(self):
+        """Отрисовывает землю на экране."""
         SCREEN_LAYOUT_DISPLAY.blit(self.image, self.rect)
         SCREEN_LAYOUT_DISPLAY.blit(self.image1, self.rect1)
 
     def update(self):
+        """Обновляет положение земли для создания эффекта бесконечного движения."""
         self.rect.left += self.speed
         self.rect1.left += self.speed
 
@@ -256,42 +334,71 @@ class Ground():
         if self.rect1.right < 0:
             self.rect1.left = self.rect.right
 
+
 class Cloud(pygame.sprite.Sprite):
+    """Класс, представляющий облако для декорации."""
+    
     def __init__(self, x, y):
-        pygame.sprite.Sprite.__init__(self,self.containers)
-        self.image,self.rect = load_image('cloud.png', int(90*30 / 42), 30, -1)
+        """
+        Инициализирует объект облака.
+        
+        Args:
+            x (int): Начальная позиция по оси X
+            y (int): Начальная позиция по оси Y
+        """
+        pygame.sprite.Sprite.__init__(self, self.containers)
+        self.image, self.rect = load_image('cloud.png', int(90*30 / 42), 30, -1)
         self.speed = 1
         self.rect.left = x
         self.rect.top = y
         self.movement = [-1 * self.speed, 0]
 
     def draw(self):
+        """Отрисовывает облако на экране."""
         SCREEN_LAYOUT_DISPLAY.blit(self.image, self.rect)
 
     def update(self):
+        """Обновляет положение облака."""
         self.rect = self.rect.move(self.movement)
         if self.rect.right < 0:
             self.kill()
 
+
 class Scoreboard():
+    """Класс для отображения счета игрока."""
+    
     def __init__(self, x=-1, y=-1):
+        """
+        Инициализирует таблицу счета.
+        
+        Args:
+            x (int): Позиция по оси X (-1 для позиции по умолчанию)
+            y (int): Позиция по оси Y (-1 для позиции по умолчанию)
+        """
         self.score = 0
         self.scre_img, self.screrect = load_sprite_sheet('numbers.png', 12, 1, 11, int(11*6 / 5), -1)
         self.image = pygame.Surface((55, int(11*6 / 5)))
         self.rect = self.image.get_rect()
         if x == -1:
-            self.rect.left = width_screen * 0.89
+            self.rect.left = WIDTH_SCREEN * 0.89
         else:
             self.rect.left = x
         if y == -1:
-            self.rect.top = height_screen * 0.1
+            self.rect.top = HEIGHT_SCREEN * 0.1
         else:
             self.rect.top = y
 
     def draw(self):
+        """Отрисовывает таблицу счета на экране."""
         SCREEN_LAYOUT_DISPLAY.blit(self.image, self.rect)
 
-    def update(self,score):
+    def update(self, score):
+        """
+        Обновляет отображаемый счет.
+        
+        Args:
+            score (int): Текущий счет для отображения
+        """
         score_digits = extract_digits(score)
         self.image.fill(BG_COLOR)
         for s in score_digits:
@@ -301,17 +408,23 @@ class Scoreboard():
 
 
 def introduction_screen():
+    """
+    Отображает вступительный экран с анимацией динозавра.
+    
+    Returns:
+        bool: True если произошел выход из игры, False для начала игры
+    """
     ado_dino = Dino(44, 47)
     ado_dino.blinking = True
     starting_game = False
 
-    t_ground,t_ground_rect = load_sprite_sheet('ground.png', 15, 1, -1, -1, -1)
-    t_ground_rect.left = width_screen / 20
-    t_ground_rect.bottom = height_screen
+    t_ground, t_ground_rect = load_sprite_sheet('ground.png', 15, 1, -1, -1, -1)
+    t_ground_rect.left = WIDTH_SCREEN / 20
+    t_ground_rect.bottom = HEIGHT_SCREEN
 
-    logo,l_rect = load_image('logo.png', 300, 140, -1)
-    l_rect.centerx = width_screen * 0.6
-    l_rect.centery = height_screen * 0.6
+    logo, l_rect = load_image('logo.png', 300, 140, -1)
+    l_rect.centerx = WIDTH_SCREEN * 0.6
+    l_rect.centery = HEIGHT_SCREEN * 0.6
     while not starting_game:
         if pygame.display.get_surface() == None:
             print("Couldn't load display surface")
@@ -341,7 +454,12 @@ def introduction_screen():
         if not ado_dino.jumping and not ado_dino.blinking:
             starting_game = True
 
+
 def gameplay():
+    """
+    Основной игровой цикл.
+    Управляет всей игровой логикой: спавном препятствий, обработкой столкновений, счетом.
+    """
     global HIGHEST_SCORES
     gp = 4
     s_Menu = False
@@ -350,7 +468,7 @@ def gameplay():
     gamer_dino = Dino(44, 47)
     new_grnd = Ground(-1 * gp)
     score_boards = Scoreboard()
-    high_score = Scoreboard(width_screen * 0.78)
+    high_score = Scoreboard(WIDTH_SCREEN * 0.78)
     counter = 0
 
     cactusan = pygame.sprite.Group()
@@ -362,18 +480,18 @@ def gameplay():
     Birds.containers = small_bird
     Cloud.containers = sky_clouds
 
-    rbtn_image,rbtn_rect = load_image('replay_button.png', 35, 31, -1)
-    gmo_image,gmo_rect = load_image('game_over.png', 190, 11, -1)
+    rbtn_image, rbtn_rect = load_image('replay_button.png', 35, 31, -1)
+    gmo_image, gmo_rect = load_image('game_over.png', 190, 11, -1)
 
-    t_images,t_rect = load_sprite_sheet('numbers.png', 12, 1, 11, int(11*6 / 5), -1)
+    t_images, t_rect = load_sprite_sheet('numbers.png', 12, 1, 11, int(11*6 / 5), -1)
     ado_image = pygame.Surface((22, int(11 * 6 / 5)))
     ado_rect = ado_image.get_rect()
     ado_image.fill(BG_COLOR)
     ado_image.blit(t_images[10], t_rect)
     t_rect.left += t_rect.width
     ado_image.blit(t_images[11], t_rect)
-    ado_rect.top = height_screen * 0.1
-    ado_rect.left = width_screen * 0.73
+    ado_rect.top = HEIGHT_SCREEN * 0.1
+    ado_rect.left = WIDTH_SCREEN * 0.73
 
     while not g_exit:
         while s_Menu:
@@ -391,7 +509,7 @@ def gameplay():
 
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_SPACE:
-                            if gamer_dino.rect.bottom == int(0.98 * height_screen):
+                            if gamer_dino.rect.bottom == int(0.98 * HEIGHT_SCREEN):
                                 gamer_dino.jumping = True
                                 if pygame.mixer.get_init() != None:
                                     JUMP_SOUND.play()
@@ -424,18 +542,18 @@ def gameplay():
                     last_end_obs.add(Cactus(gp, 40, 40))
                 else:
                     for l in last_end_obs:
-                        if l.rect.right < width_screen * 0.7 and random.randrange(0, 50) == 10:
+                        if l.rect.right < WIDTH_SCREEN * 0.7 and random.randrange(0, 50) == 10:
                             last_end_obs.empty()
                             last_end_obs.add(Cactus(gp, 40, 40))
 
             if len(small_bird) == 0 and random.randrange(0, 200) == 10 and counter > 500:
                 for l in last_end_obs:
-                    if l.rect.right < width_screen * 0.8:
+                    if l.rect.right < WIDTH_SCREEN * 0.8:
                         last_end_obs.empty()
                         last_end_obs.add(Birds(gp, 46, 40))
 
             if len(sky_clouds) < 5 and random.randrange(0, 300) == 10:
-                Cloud(width_screen, random.randrange(int(height_screen / 5), int(height_screen / 2)))
+                Cloud(WIDTH_SCREEN, random.randrange(int(HEIGHT_SCREEN / 5), int(HEIGHT_SCREEN / 2)))
 
             gamer_dino.update()
             cactusan.update()
@@ -504,11 +622,16 @@ def gameplay():
     pygame.quit()
     quit()
 
-# Точка входа в игру
+
 def main():
+    """
+    Главная функция запуска игры.
+    Последовательно запускает вступительный экран и основной игровой цикл.
+    """
     is_game_quit = introduction_screen()
     if not is_game_quit:
         gameplay()
+
 
 if __name__ == "__main__":
     main()
