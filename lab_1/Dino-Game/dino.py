@@ -7,27 +7,27 @@ from pygame import RLEACCEL
 pygame.init()
 
 # Настройка окна и базовых параметров игры
-screen_size_display = (width_screen, height_screen) = (600, 150)
+SCREEN_SIZE_DISPLAY = (width_screen, height_screen) = (600, 150)
 FPS = 60
-gravity = 0.6
+GRAVITY = 0.6
 
 # Цветовые коды
-black_color = (0, 0, 0)
-white_color = (255, 255, 255)
-bg_color = (235, 235, 235)
+BLACK_COLOR = (0, 0, 0)
+WHITE_COLOR = (255, 255, 255)
+BG_COLOR = (235, 235, 235)
 
 # Переменная для хранения рекорда
-highest_scores = 0
+HIGHEST_SCORES = 0
 
 # Настройка экрана
-screen_layout_display = pygame.display.set_mode(screen_size_display)
-time_clock = pygame.time.Clock()
+SCREEN_LAYOUT_DISPLAY = pygame.display.set_mode(SCREEN_SIZE_DISPLAY)
+TIME_CLOCK = pygame.time.Clock()
 pygame.display.set_caption("Dino Run ")
 
 # Загрузка звуков
-jump_sound = pygame.mixer.Sound('resources/jump.wav')
-die_sound = pygame.mixer.Sound('resources/die.wav')
-check_point_sound = pygame.mixer.Sound('resources/checkPoint.wav')
+JUMP_SOUND = pygame.mixer.Sound('resources/jump.wav')
+DIE_SOUND = pygame.mixer.Sound('resources/die.wav')
+CHECK_POINT_SOUND = pygame.mixer.Sound('resources/checkPoint.wav')
 
 # Загрузка изображения с возможностью изменения размера
 def load_image(
@@ -101,8 +101,8 @@ def gameover_display_message(rbtn_image, gmo_image):
     gmo_rect.centerx = width_screen / 2
     gmo_rect.centery = height_screen * 0.35
 
-    screen_layout_display.blit(rbtn_image, rbtn_rect)
-    screen_layout_display.blit(gmo_image, gmo_rect)
+    SCREEN_LAYOUT_DISPLAY.blit(rbtn_image, rbtn_rect)
+    SCREEN_LAYOUT_DISPLAY.blit(gmo_image, gmo_rect)
 
 # Разбивка числа на отдельные цифры для отображения очков
 def extract_digits(num):
@@ -140,7 +140,7 @@ class Dino():
         self.duck_position_width = self.rect1.width
 
     def draw(self):
-        screen_layout_display.blit(self.image, self.rect)
+        SCREEN_LAYOUT_DISPLAY.blit(self.image, self.rect)
 
     def checkbounds(self):
         if self.rect.bottom > int(0.98 * height_screen):
@@ -149,7 +149,7 @@ class Dino():
 
     def update(self):
         if self.jumping:
-            self.movement[1] = self.movement[1] + gravity
+            self.movement[1] = self.movement[1] + GRAVITY
 
         if self.jumping:
             self.index = 0
@@ -185,7 +185,7 @@ class Dino():
             self.score += 1
             if self.score % 100 == 0 and self.score != 0:
                 if pygame.mixer.get_init() != None:
-                    check_point_sound.play()
+                    CHECK_POINT_SOUND.play()
 
         self.counter += 1
 
@@ -199,7 +199,7 @@ class Cactus(pygame.sprite.Sprite):
         self.movement = [-1 * speed, 0]
 
     def draw(self):
-        screen_layout_display.blit(self.image, self.rect)
+        SCREEN_LAYOUT_DISPLAY.blit(self.image, self.rect)
 
     def update(self):
         self.rect = self.rect.move(self.movement)
@@ -220,7 +220,7 @@ class Birds(pygame.sprite.Sprite):
         self.counter = 0
 
     def draw(self):
-        screen_layout_display.blit(self.image, self.rect)
+        SCREEN_LAYOUT_DISPLAY.blit(self.image, self.rect)
 
     def update(self):
         if self.counter % 10 == 0:
@@ -242,8 +242,8 @@ class Ground():
         self.speed = speed
 
     def draw(self):
-        screen_layout_display.blit(self.image, self.rect)
-        screen_layout_display.blit(self.image1, self.rect1)
+        SCREEN_LAYOUT_DISPLAY.blit(self.image, self.rect)
+        SCREEN_LAYOUT_DISPLAY.blit(self.image1, self.rect1)
 
     def update(self):
         self.rect.left += self.speed
@@ -265,7 +265,7 @@ class Cloud(pygame.sprite.Sprite):
         self.movement = [-1 * self.speed, 0]
 
     def draw(self):
-        screen_layout_display.blit(self.image, self.rect)
+        SCREEN_LAYOUT_DISPLAY.blit(self.image, self.rect)
 
     def update(self):
         self.rect = self.rect.move(self.movement)
@@ -288,11 +288,11 @@ class Scoreboard():
             self.rect.top = y
 
     def draw(self):
-        screen_layout_display.blit(self.image, self.rect)
+        SCREEN_LAYOUT_DISPLAY.blit(self.image, self.rect)
 
     def update(self,score):
         score_digits = extract_digits(score)
-        self.image.fill(bg_color)
+        self.image.fill(BG_COLOR)
         for s in score_digits:
             self.image.blit(self.scre_img[s], self.screrect)
             self.screrect.left += self.screrect.width
@@ -328,20 +328,20 @@ def introduction_screen():
         ado_dino.update()
 
         if pygame.display.get_surface() != None:
-            screen_layout_display.fill(bg_color)
-            screen_layout_display.blit(t_ground[0], t_ground_rect)
+            SCREEN_LAYOUT_DISPLAY.fill(BG_COLOR)
+            SCREEN_LAYOUT_DISPLAY.blit(t_ground[0], t_ground_rect)
             if ado_dino.blinking:
-                screen_layout_display.blit(logo, l_rect)
+                SCREEN_LAYOUT_DISPLAY.blit(logo, l_rect)
             ado_dino.draw()
 
             pygame.display.update()
 
-        time_clock.tick(FPS)
+        TIME_CLOCK.tick(FPS)
         if not ado_dino.jumping and not ado_dino.blinking:
             starting_game = True
 
 def gameplay():
-    global highest_scores
+    global HIGHEST_SCORES
     gp = 4
     s_Menu = False
     g_over = False
@@ -367,7 +367,7 @@ def gameplay():
     t_images,t_rect = load_sprite_sheet('numbers.png', 12, 1, 11, int(11*6 / 5), -1)
     ado_image = pygame.Surface((22, int(11 * 6 / 5)))
     ado_rect = ado_image.get_rect()
-    ado_image.fill(bg_color)
+    ado_image.fill(BG_COLOR)
     ado_image.blit(t_images[10], t_rect)
     t_rect.left += t_rect.width
     ado_image.blit(t_images[11], t_rect)
@@ -393,7 +393,7 @@ def gameplay():
                             if gamer_dino.rect.bottom == int(0.98 * height_screen):
                                 gamer_dino.jumping = True
                                 if pygame.mixer.get_init() != None:
-                                    jump_sound.play()
+                                    JUMP_SOUND.play()
                                 gamer_dino.movement[1] = -1 * gamer_dino.jump_speed
 
                         if event.key == pygame.K_DOWN:
@@ -408,14 +408,14 @@ def gameplay():
                 if pygame.sprite.collide_mask(gamer_dino, c):
                     gamer_dino.dead = True
                     if pygame.mixer.get_init() != None:
-                        die_sound.play()
+                        DIE_SOUND.play()
 
             for p in small_bird:
                 p.movement[0] = -1 * gp
                 if pygame.sprite.collide_mask(gamer_dino, p):
                     gamer_dino.dead = True
                     if pygame.mixer.get_init() != None:
-                        die_sound.play()
+                        DIE_SOUND.play()
 
             if len(cactusan) < 2:
                 if len(cactusan) == 0:
@@ -442,27 +442,27 @@ def gameplay():
             sky_clouds.update()
             new_grnd.update()
             score_boards.update(gamer_dino.score)
-            high_score.update(highest_scores)
+            high_score.update(HIGHEST_SCORES)
 
             if pygame.display.get_surface() != None:
-                screen_layout_display.fill(bg_color)
+                SCREEN_LAYOUT_DISPLAY.fill(BG_COLOR)
                 new_grnd.draw()
-                sky_clouds.draw(screen_layout_display)
+                sky_clouds.draw(SCREEN_LAYOUT_DISPLAY)
                 score_boards.draw()
-                if highest_scores != 0:
+                if HIGHEST_SCORES != 0:
                     high_score.draw()
-                    screen_layout_display.blit(ado_image, ado_rect)
-                cactusan.draw(screen_layout_display)
-                small_bird.draw(screen_layout_display)
+                    SCREEN_LAYOUT_DISPLAY.blit(ado_image, ado_rect)
+                cactusan.draw(SCREEN_LAYOUT_DISPLAY)
+                small_bird.draw(SCREEN_LAYOUT_DISPLAY)
                 gamer_dino.draw()
 
                 pygame.display.update()
-            time_clock.tick(FPS)
+            TIME_CLOCK.tick(FPS)
 
             if gamer_dino.dead:
                 g_over = True
-                if gamer_dino.score > highest_scores:
-                    highest_scores = gamer_dino.score
+                if gamer_dino.score > HIGHEST_SCORES:
+                    HIGHEST_SCORES = gamer_dino.score
 
             if counter % 700 == 699:
                 new_grnd.speed -= 1
@@ -491,14 +491,14 @@ def gameplay():
                         if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                             g_over = False
                             gameplay()
-            high_score.update(highest_scores)
+            high_score.update(HIGHEST_SCORES)
             if pygame.display.get_surface() != None:
                 gameover_display_message(rbtn_image, gmo_image)
-                if highest_scores != 0:
+                if HIGHEST_SCORES != 0:
                     high_score.draw()
-                    screen_layout_display.blit(ado_image, ado_rect)
+                    SCREEN_LAYOUT_DISPLAY.blit(ado_image, ado_rect)
                 pygame.display.update()
-            time_clock.tick(FPS)
+            TIME_CLOCK.tick(FPS)
 
     pygame.quit()
     quit()
